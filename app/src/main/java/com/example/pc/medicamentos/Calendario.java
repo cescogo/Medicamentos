@@ -1,9 +1,17 @@
 package com.example.pc.medicamentos;
 
+import android.app.Dialog;
+import android.app.FragmentManager;
+import android.app.FragmentTransaction;
+import android.app.usage.UsageEvents;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.text.style.TextAppearanceSpan;
+import android.util.EventLog;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -14,15 +22,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.CalendarView;
+import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.pc.medicamentos.entities.Medicamento;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
 public class Calendario extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    BaseDeDatos basedatos;
+    ArrayList<Medicamento> medicamentosList = new ArrayList<Medicamento>();
+    private Medicamento prod;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +53,7 @@ public class Calendario extends AppCompatActivity
             public void onClick(View view) {
                 Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
-                
+
             }
         });
 
@@ -48,25 +65,72 @@ public class Calendario extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-       // fecha=Calendar.getInstance().getTime();
-        prueba=(TextView) findViewById(R.id.textprueba);
-        calendario= (CalendarView) findViewById(R.id.calendarView);
-        calendario.setOnDateChangeListener(new CalendarView.OnDateChangeListener() {
-
-            @Override
-            public void onSelectedDayChange(CalendarView view, int year, int month,
-                                            int dayOfMonth) {
-                prueba.setText(dayOfMonth+"/"+month+"/"+year);// TODO Auto-generated method stub
-
-            }
-        });
-
+        basedatos=BaseDeDatos.getInstance(this);
+        initializeList();
 
 
 
     }
+    public void initializeList() { //se inicializa la lista tomando los datos de la bd local del celular
+        medicamentosList.clear();
+        medicamentosList=basedatos.getListaMedicamentos();
+        mostrarMedicamentos();
 
-    @Override
+    }
+
+    private void mostrarMedicamentos() { //se colocan los registros de la bd en el scroll bar creando los chech y seteando los onclick
+        LinearLayout panel = (LinearLayout) findViewById(R.id.linear_producs2);
+
+        for (int i = 0; i < medicamentosList.size(); i++) {
+            final TextView ch = new TextView(this);
+            ch.setId(i);
+            ch.setText("nom: " + medicamentosList.get(i).getNombre());
+
+            ch.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    Medicamento produc = Medicamento.getInstance();
+                  /*  prod = medicamentosList.get(ch.getId());
+                    produc.setNombre(prod.getNombre());*/
+                    MensajeInformacion(ch.getId());
+
+                    return true;
+                }
+            });
+
+
+            panel.addView(ch);
+
+
+        }
+    }
+
+    public void MensajeInformacion(final int pos){ // pop up creada para tomar la cantidad de productos que desea comprar el usuario
+        View view = (LayoutInflater.from(Calendario.this)).inflate(R.layout.popup_informacion, null);
+
+        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Calendario.this);
+        alertBuilder.setView(view);
+        //final EditText userInput = (EditText) view.findViewById(R.id.);
+        final EditText edit= (EditText) view.findViewById(R.id.edit_nom_med);
+        alertBuilder.setCancelable(true)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        // Producto produc= Producto.getInstance();
+                        prod= medicamentosList.get(pos);
+                        edit.setText(prod.getNombre());
+
+                    }
+                });
+        Dialog dialog = alertBuilder.create();
+        dialog.show();
+        ;}
+
+
+
+        @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
