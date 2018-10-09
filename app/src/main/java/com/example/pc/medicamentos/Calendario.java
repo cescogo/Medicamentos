@@ -11,6 +11,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.text.style.TextAppearanceSpan;
 import android.util.EventLog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -65,7 +66,8 @@ public class Calendario extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-        basedatos=BaseDeDatos.getInstance(this);
+        basedatos=new BaseDeDatos(this);
+        //basedatos.agregarMedicamento(new Medicamento("paracetamol","28/4/2018","6:00 am",30,12));
         initializeList();
 
 
@@ -73,8 +75,10 @@ public class Calendario extends AppCompatActivity
     }
     public void initializeList() { //se inicializa la lista tomando los datos de la bd local del celular
         medicamentosList.clear();
+
         medicamentosList=basedatos.getListaMedicamentos();
         mostrarMedicamentos();
+        Log.e("lista de medicamentos: ","lista de medicamentos: "+medicamentosList.size());
 
     }
 
@@ -89,10 +93,11 @@ public class Calendario extends AppCompatActivity
             ch.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    Medicamento produc = Medicamento.getInstance();
+                   // Medicamento produc = Medicamento.getInstance();
                   /*  prod = medicamentosList.get(ch.getId());
                     produc.setNombre(prod.getNombre());*/
                     MensajeInformacion(ch.getId());
+
 
                     return true;
                 }
@@ -111,7 +116,9 @@ public class Calendario extends AppCompatActivity
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Calendario.this);
         alertBuilder.setView(view);
         //final EditText userInput = (EditText) view.findViewById(R.id.);
-        final EditText edit= (EditText) view.findViewById(R.id.edit_nom_med);
+        final TextView edit= (TextView) view.findViewById(R.id.text_nom_med);
+        prod= medicamentosList.get(pos);
+        edit.setText(edit.getText()+prod.getNombre());
         alertBuilder.setCancelable(true)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 
@@ -119,8 +126,8 @@ public class Calendario extends AppCompatActivity
                     public void onClick(DialogInterface dialog, int which) {
 
                         // Producto produc= Producto.getInstance();
-                        prod= medicamentosList.get(pos);
-                        edit.setText(prod.getNombre());
+
+
 
                     }
                 });

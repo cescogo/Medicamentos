@@ -34,6 +34,7 @@ public class BaseDeDatos extends SQLiteOpenHelper {
         super.onConfigure(db);
         db.setForeignKeyConstraintsEnabled(true);
        // droptable(db);
+
     }
 
     @Override
@@ -51,6 +52,7 @@ public class BaseDeDatos extends SQLiteOpenHelper {
         Log.i("Base de Datos", "Tabla Producto");
 
 
+
     }
     public void droptable(SQLiteDatabase db) // se elimina la bd local y se vuelve a crear para que no de error al querer ingresar un producto
     {
@@ -59,6 +61,8 @@ public class BaseDeDatos extends SQLiteOpenHelper {
         db.execSQL(productos.toString());
         onCreate(db);
     }
+
+
 
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         if (oldVersion != newVersion) {
