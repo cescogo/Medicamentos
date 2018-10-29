@@ -1,5 +1,7 @@
 package com.example.pc.medicamentos.entities;
 
+import android.text.Editable;
+
 import java.io.Serializable;
 
 public class Medicamento implements Serializable {
@@ -17,6 +19,8 @@ public class Medicamento implements Serializable {
         this.cantidad = cantidad;
         this.frecuencia = frecuencia;
     }
+
+
     public static Medicamento getInstance() {
         if(instance == null) {instance = new Medicamento(); }
         return instance;

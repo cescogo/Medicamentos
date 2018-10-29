@@ -14,6 +14,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.EditText;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
@@ -24,18 +26,38 @@ import java.util.Calendar;
 public class AgregarMedicamentos extends AppCompatActivity {
     Calendar mcurrentDate;
     int mYear,mMonth,mDay,hour,minute;
-    Medicamento med;
+        BaseDeDatos baseDeDatos;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_agregar_medicamentos);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        baseDeDatos=BaseDeDatos.getInstance(this);
         mcurrentDate= Calendar.getInstance();
          mYear = mcurrentDate.get(Calendar.YEAR);
          mMonth = mcurrentDate.get(Calendar.MONTH);
          mDay = mcurrentDate.get(Calendar.DAY_OF_MONTH);
-         med=Medicamento.getInstance();
+         final TextView textfreq= (TextView) findViewById(R.id.text_freq);
+        SeekBar barraFreq= (SeekBar) findViewById(R.id.seek_freq);
+        barraFreq.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            int pval = 0;
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                pval = progress;
+                textfreq.setText(pval + " h" );
+            }
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                pval = seekBar.getProgress();
+
+                //write custom code to on start progress
+            }
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         final TextView agregarmed = (TextView) findViewById(R.id.text_fecha);
         agregarmed.setOnClickListener(new View.OnClickListener(){
@@ -50,7 +72,7 @@ public class AgregarMedicamentos extends AppCompatActivity {
             DatePickerDialog mDatePicker;
             mDatePicker = new DatePickerDialog(AgregarMedicamentos.this, new DatePickerDialog.OnDateSetListener() {
                 public void onDateSet(DatePicker datepicker, int selectedyear, int selectedmonth, int selectedday) {
-                    agregarmed.setText(selectedday+"/"+selectedmonth+"/"+selectedyear);
+                    agregarmed.setText(selectedday+"/"+(selectedmonth+1)+"/"+selectedyear);
                 }
             }, mYear, mMonth, mDay);
             mDatePicker.setTitle("Select Date");
@@ -91,9 +113,35 @@ public class AgregarMedicamentos extends AppCompatActivity {
 
 
         });
-        agregarmed.setText(mDay+"/"+mMonth+"/"+mYear);
+        int aux2=mMonth+1;
+        agregarmed.setText(mDay+"/"+(aux2)+"/"+mYear);
         agregarHora.setText(hour+":"+minute);
+
+        Button but_agregar= (Button) findViewById(R.id.but_agregar);
+        but_agregar.setOnClickListener(new View.OnClickListener(){
+
+            @Override
+
+            public void onClick(View arg0) {
+
+                EditText text_med= (EditText) findViewById(R.id.Edit_Nom_Med);
+                final EditText text_cant= (EditText) findViewById(R.id.edit_cantidad);
+                TextView text_fech= (TextView) findViewById(R.id.text_fecha);
+                TextView text_hor= (TextView) findViewById(R.id.text_hora);
+                SeekBar text_freq= (SeekBar) findViewById(R.id.seek_freq);
+                String auxcant= String.valueOf(text_cant.getText());
+                int cant=Integer.parseInt(auxcant);
+
+                baseDeDatos.getWritableDatabase();
+                baseDeDatos.agregarMedicamento(new Medicamento(text_med.getText().toString(),text_fech.getText().toString() , text_hor.getText().toString(),cant, text_freq.getProgress()));
+                Intent intento = new Intent(getApplicationContext(), Calendario.class);
+                startActivity(intento);
+            }
+
+        });
     }
+
+
 }
 
 
