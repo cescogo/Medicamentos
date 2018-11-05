@@ -6,6 +6,7 @@ import android.app.FragmentTransaction;
 import android.app.usage.UsageEvents;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -41,6 +42,7 @@ public class Calendario extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     BaseDeDatos basedatos;
+    Calendar mcurrentDate;
     ArrayList<Medicamento> medicamentosList = new ArrayList<Medicamento>();
     private Medicamento prod;
     @Override
@@ -68,6 +70,7 @@ public class Calendario extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
         basedatos=new BaseDeDatos(this);
+        mcurrentDate= Calendar.getInstance();
         //basedatos.agregarMedicamento(new Medicamento("paracetamol","28/4/2018","6:00 am",30,12));
         initializeList();
 
@@ -85,6 +88,7 @@ public class Calendario extends AppCompatActivity
 
     private void mostrarMedicamentos() { //se colocan los registros de la bd en el scroll bar creando los chech y seteando los onclick
         LinearLayout panel = (LinearLayout) findViewById(R.id.linear_producs2);
+
 
         for (int i = 0; i < medicamentosList.size(); i++) {
             final TextView ch = new TextView(this);
@@ -104,8 +108,13 @@ public class Calendario extends AppCompatActivity
                 }
             });
 
-
+            if(i%2!=0)
+            {
+                ch.setBackgroundColor(Color.GRAY);
+            }
             panel.addView(ch);
+
+
 
 
         }
@@ -117,9 +126,24 @@ public class Calendario extends AppCompatActivity
         AlertDialog.Builder alertBuilder = new AlertDialog.Builder(Calendario.this);
         alertBuilder.setView(view);
         //final EditText userInput = (EditText) view.findViewById(R.id.);
+        final TextView freq= (TextView) view.findViewById(R.id.text_freq_infd);
+        final TextView prox= (TextView) view.findViewById(R.id.text_prox_dos);
         final TextView edit= (TextView) view.findViewById(R.id.text_nom_med);
+
         prod= medicamentosList.get(pos);
+        int auxhour=(prod.getFrecuencia()*60+prod.getHoraInicio())/60;
+        int auxmin=prod.getHoraInicio()-((prod.getHoraInicio()/60)*60);
+        if(auxmin<10)
+        {
+            prox.setText(prox.getText()+""+auxhour+":"+"0"+auxmin);
+        }
+        else
+        {
+            prox.setText(prox.getText()+""+auxhour+":"+auxmin);
+        }
+
         edit.setText(edit.getText()+prod.getNombre());
+        freq.setText(freq.getText()+ String.valueOf(prod.getFrecuencia())+"H");
         alertBuilder.setCancelable(true)
                 .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
 

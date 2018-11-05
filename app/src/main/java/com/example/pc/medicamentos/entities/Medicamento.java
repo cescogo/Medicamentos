@@ -5,14 +5,14 @@ import android.text.Editable;
 import java.io.Serializable;
 
 public class Medicamento implements Serializable {
-    String nombre,fechaInicio,HoraInicio;
-    int cantidad,frecuencia;
+    String nombre,fechaInicio;
+    int cantidad,frecuencia,HoraInicio;
     private static Medicamento instance = null;
 
     public Medicamento() {
     }
 
-    public Medicamento(String nombre, String fechaInicio, String horaInicio, int cantidad, int frecuencia) {
+    public Medicamento(String nombre, String fechaInicio, int horaInicio, int cantidad, int frecuencia) {
         this.nombre = nombre;
         this.fechaInicio = fechaInicio;
         HoraInicio = horaInicio;
@@ -42,11 +42,11 @@ public class Medicamento implements Serializable {
         this.fechaInicio = fechaInicio;
     }
 
-    public String getHoraInicio() {
+    public int getHoraInicio() {
         return HoraInicio;
     }
 
-    public void setHoraInicio(String horaInicio) {
+    public void setHoraInicio(int horaInicio) {
         HoraInicio = horaInicio;
     }
 

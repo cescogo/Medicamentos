@@ -33,7 +33,7 @@ public class BaseDeDatos extends SQLiteOpenHelper {
     public void onConfigure(SQLiteDatabase db) {
         super.onConfigure(db);
         db.setForeignKeyConstraintsEnabled(true);
-       // droptable(db);
+        //droptable(db);
 
     }
 
@@ -45,7 +45,7 @@ public class BaseDeDatos extends SQLiteOpenHelper {
                 "nombre text, " +
                 "fechaInicio text, " +
                 "cantidad integer," +
-                "horaInicio text,"+
+                "horaInicio integer,"+
                 "frecuencia integer"+
                 ");";
         db.execSQL(productos.toString());
@@ -57,7 +57,7 @@ public class BaseDeDatos extends SQLiteOpenHelper {
     public void droptable(SQLiteDatabase db) // se elimina la bd local y se vuelve a crear para que no de error al querer ingresar un producto
     {
 
-        String productos = "drop table  Producto;";
+        String productos = "drop table  Medicamentos;";
         db.execSQL(productos.toString());
         onCreate(db);
     }
@@ -111,7 +111,7 @@ public class BaseDeDatos extends SQLiteOpenHelper {
                     aux.setNombre(cursor.getString(cursor.getColumnIndexOrThrow("nombre")));
                     aux.setFechaInicio(cursor.getString(cursor.getColumnIndexOrThrow("fechaInicio")));
                     aux.setFrecuencia(cursor.getInt(cursor.getColumnIndexOrThrow("frecuencia")));
-                    aux.setHoraInicio(cursor.getString(cursor.getColumnIndex("horaInicio")));
+                    aux.setHoraInicio(cursor.getInt(cursor.getColumnIndex("horaInicio")));
                     aux.setCantidad(cursor.getInt(cursor.getColumnIndex("cantidad")));
                     lista.add(aux);
                     cursor.moveToNext();
